@@ -30,14 +30,14 @@
     </plugins>
   </build>
 
-  {% for dep in deps %}
   <dependencies>
+    {% for dep in deps %}
     <dependency>
       <groupId>{{ dep.group_id }}</groupId>
       <artifactId>{{ dep.artifact_id }}</artifactId>
       <version>{{ dep.version }}</version>
     </dependency>
+    {% endfor %}
   </dependencies>
-  {% endfor %}
 
 </project>
