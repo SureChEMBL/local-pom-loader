@@ -1,0 +1,78 @@
+#!/usr/bin/env python
+
+import argparse
+import jinja2
+import os
+import shutil
+import subprocess
+import tempfile
+
+def get_args():
+    arg_parser = argparse.ArgumentParser(
+        description =
+        'Prints Java classpath with all transitive dependencies '
+        'for a given list of Java dependencies placed in local maven repo.',
+        formatter_class = argparse.ArgumentDefaultsHelpFormatter)
+
+    arg_parser.add_argument(
+        'deps', nargs = '+', metavar = 'dependency',
+        help = 'Java dependency formatted as <groupId>:<artefactId>:<version>')
+
+    arg_parser.add_argument(
+        '--repo', type = str, nargs = '?', default = '/usr/share/maven-repo',
+        help = 'Path to local maven repo')
+
+    arg_parser.add_argument(
+        '--tmpl', type = str, nargs = '?',
+        default = '/usr/share/local-pom-loader/pom.xml.j2',
+        help = 'Path to arbitrary pom.xml template that generates classpath')
+
+    args = arg_parser.parse_args()
+
+    return args
+
+def parse_raw_dep(raw_dep):
+    parts = raw_dep.split(':')
+    if len(parts) != 3:
+        raise ValueError('raw dependency should consist of 3 parts delimited by ":"')
+    dep = { 'group_id': parts[0], 'artifact_id': parts[1], 'version': parts[2] }
+
+    return dep
+
+def load_tmpl(tmpl_path):
+    tmpl_dir, tmpl_fname = os.path.split(tmpl_path)
+    j2_env = jinja2.Environment(
+        loader = jinja2.FileSystemLoader(tmpl_dir))
+    tmpl = j2_env.get_template(tmpl_fname)
+
+    return tmpl    
+
+def get_classpath(repo_path, tmpl_path, raw_deps):
+    deps = [ parse_raw_dep(raw_dep) for raw_dep in raw_deps ]
+
+    tmp_dir = tempfile.mkdtemp()
+
+    try:
+        tmpl = load_tmpl(tmpl_path)
+        pom_xml = tmpl.render({ 'deps': deps })
+
+        open(os.path.join(tmp_dir, 'pom.xml'), 'w').write(pom_xml)
+        subprocess.check_call(
+            ['mvn', '-q', '--offline',
+             '-Dmaven.repo.local={0}'.format(repo_path),
+            'generate-sources'],
+            cwd = tmp_dir)
+
+        classpath = open(os.path.join(tmp_dir, 'java-lib-deps.txt'), "r").read()
+    finally:
+        shutil.rmtree(tmp_dir)
+
+    return classpath
+
+def main():
+    args = get_args()
+    classpath = get_classpath(args.repo, args.tmpl, args.deps)
+    print classpath
+
+if __name__ == "__main__":
+    main()

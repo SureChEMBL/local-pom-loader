@@ -1,0 +1,43 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>local-pom-loader</groupId>
+  <artifactId>tmp</artifactId>
+  <packaging>pom</packaging>
+  <version>0.0.1</version>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>java-deps</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>build-classpath</goal>
+            </goals>
+            <inherited>false</inherited>
+            <configuration>
+              <outputFile>java-lib-deps.txt</outputFile>
+            </configuration>
+          </execution>                        
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+  {% for dep in deps %}
+  <dependencies>
+    <dependency>
+      <groupId>{{ dep.group_id }}</groupId>
+      <artifactId>{{ dep.artifact_id }}</artifactId>
+      <version>{{ dep.version }}</version>
+    </dependency>
+  </dependencies>
+  {% endfor %}
+
+</project>
