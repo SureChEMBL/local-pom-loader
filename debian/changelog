@@ -1,3 +1,9 @@
+local-pom-loader (0.0.1-2) unstable; urgency=medium
+
+  * Added maven dependencies to debian build.
+
+ -- Yury Zavarin <yzavarin@ebi.ac.uk>  Thu, 09 Mar 2017 20:01:51 +0000
+
 local-pom-loader (0.0.1-1) unstable; urgency=medium
 
   * Initial release.

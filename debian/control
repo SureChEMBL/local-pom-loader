@@ -5,6 +5,8 @@ Maintainer: Yury Zavarin <yzavarin@ebi.ac.uk>
 Build-Depends:
  debhelper (>= 9),
 Build-Depends-Indep:
+ libmaven-dependency-plugin-java,
+ maven,
  python,
  python-jinja2
 
@@ -12,6 +14,8 @@ Package: local-pom-loader
 Architecture: all
 Depends:
  ${misc:Depends},
+ libmaven-dependency-plugin-java,
+ maven,
  python,
  python-jinja2
 Description: Generates Java classpath for dependencies from local maven repo
