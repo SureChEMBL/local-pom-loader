@@ -1,0 +1,22 @@
+#!/usr/bin/make -f
+
+PACKAGE = local-pom-loader
+BIN_DIR = debian/$(PACKAGE)/usr/bin
+SHARE_DIR = debian/$(PACKAGE)/usr/share/$(PACKAGE)
+
+override_dh_auto_configure:
+	# No configure
+
+override_dh_auto_build:
+	# No build
+
+override_dh_install:
+	dh_auto_install
+
+	mkdir -p $(BIN_DIR)
+	cp local-pom-loader $(BIN_DIR)
+
+	mkdir -p $(SHARE_DIR)
+	cp pom.xml.j2 $(SHARE_DIR)
+%:
+	dh $@
