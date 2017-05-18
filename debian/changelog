@@ -1,3 +1,9 @@
+local-pom-loader (0.0.2-1) unstable; urgency=medium
+
+  * Default repo and tmpl paths are available as functions.
+
+ -- Yury Zavarin <yzavarin@ebi.ac.uk>  Thu, 18 May 2017 20:12:11 +0100
+
 local-pom-loader (0.0.1-2) unstable; urgency=medium
 
   * Added maven dependencies to debian build.
