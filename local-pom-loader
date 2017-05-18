@@ -7,6 +7,12 @@ import shutil
 import subprocess
 import tempfile
 
+def default_repo():
+    return '/usr/share/maven-repo'
+
+def default_tmpl():
+    return '/usr/share/local-pom-loader/pom.xml.j2'
+
 def get_args():
     arg_parser = argparse.ArgumentParser(
         description =
@@ -19,12 +25,12 @@ def get_args():
         help = 'Java dependency formatted as <groupId>:<artefactId>:<version>')
 
     arg_parser.add_argument(
-        '--repo', type = str, nargs = '?', default = '/usr/share/maven-repo',
+        '--repo', type = str, nargs = '?', default = default_repo(),
         help = 'Path to local maven repo')
 
     arg_parser.add_argument(
         '--tmpl', type = str, nargs = '?',
-        default = '/usr/share/local-pom-loader/pom.xml.j2',
+        default = default_tmpl(),
         help = 'Path to arbitrary pom.xml template that generates classpath')
 
     args = arg_parser.parse_args()
@@ -45,7 +51,7 @@ def load_tmpl(tmpl_path):
         loader = jinja2.FileSystemLoader(tmpl_dir))
     tmpl = j2_env.get_template(tmpl_fname)
 
-    return tmpl    
+    return tmpl
 
 def get_classpath(repo_path, tmpl_path, raw_deps):
     deps = [ parse_raw_dep(raw_dep) for raw_dep in raw_deps ]
